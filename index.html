@@ -1,17 +1,19 @@
-<!-- 图标文档   https://fontawesome.com/v4/icons/ -->
+<!-- 图标图标文档   https://fontawesome.com/v4/icons/ -->
 <!DOCTYPE html>
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>分类导航仪表盘</title>
+    <title>个人导航</title>
     <!-- 引入Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- 引入Font Awesome -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css"
-      rel="stylesheet"
-    />
+
+    <!-- <style>
+      /* 页面全灰 */
+      html {
+        filter: grayscale(100%);
+      }
+    </style> -->
 
     <!-- Tailwind配置 -->
     <script>
@@ -51,6 +53,15 @@
         .text-shadow {
           text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
         }
+        .sidebar-item {
+          @apply flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 cursor-pointer;
+        }
+        .sidebar-item.active {
+          @apply bg-primary/10 text-primary font-medium;
+        }
+        .sidebar-item:hover {
+          @apply bg-primary/10 font-medium;
+        }
       }
     </style>
 
@@ -71,19 +82,10 @@
         animation: fadeIn 0.3s ease forwards;
       }
 
-      /* 进度条动画 */
-      @keyframes progress {
-        from {
-          width: 0;
-        }
-        to {
-          width: var(--progress-width);
-        }
-      }
-
-      .progress-bar {
-        --progress-width: 0%;
-        animation: progress 0.8s ease-out forwards;
+      /* 进度条平滑滚动 */
+      #progress {
+        width: 0;
+        transition: width 0.5s ease-in-out;
       }
 
       /* 平滑滚动 */
@@ -163,2098 +165,739 @@
       ::-webkit-scrollbar-thumb:hover {
         background: #a1a1a1;
       }
+
+      /* 内容区域切换动画 */
+      .content-section {
+        display: none;
+        animation: fadeIn 0.3s ease forwards;
+      }
+
+      .content-section.active {
+        display: block;
+      }
+
+      label:hover {
+        cursor: pointer;
+      }
     </style>
   </head>
-
   <body class="bg-gray-50 text-gray-800 font-sans min-h-screen">
     <!-- 顶部通知栏 -->
     <div
       class="bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-2 px-4 text-center text-sm"
     >
-      <p>
-        📢
-        优化了一些「已知问题」，添加了「天气模块」和「AI工具模块」，点击探索更多资源
-      </p>
+      <p>📢 优化了一些「已知问题」，添加了「返回顶部按钮」，点击探索更多资源</p>
     </div>
 
-    <div class="max-w-6xl mx-auto w-full p-4 md:p-6">
-      <!-- 头部信息 -->
-      <header class="mb-6 animate-fade-in">
+    <!-- 主体内容 -->
+    <div
+      class="bg-white max-w-7xl mx-auto w-full h-fit p-4 md:p-6 flex flex-col lg:flex-row gap-6"
+    >
+      <!-- 侧边栏 -->
+      <aside class="lg:w-64 lg:block animate-fade-in">
         <div
-          class="flex flex-col md:flex-row md:items-center justify-between gap-4"
+          class="bg-white rounded-lg p-3 border border-gray-100 shadow-sm sticky top-4"
         >
-          <div>
-            <h2
-              id="greeting"
-              class="text-[clamp(1.4rem,3vw,2rem)] font-bold text-shadow"
-            >
-              早上好！
-            </h2>
-            <p id="date" class="text-gray-500">2023年1月1日 星期一</p>
+          <div class="mb-4 px-4 pt-2">
+            <h2 class="font-bold text-lg">导航菜单</h2>
           </div>
 
-          <div class="flex items-center gap-2">
+          <div class="space-y-1">
+            <div class="hover:bg sidebar-item active" data-target="dashboard">
+              <span class="text-center">😀 首页</span>
+            </div>
+            <div class="sidebar-item" data-target="study">
+              <span>✍️ 学习资源</span>
+            </div>
+            <div class="sidebar-item" data-target="jobs">
+              <span>🐮 就业招聘</span>
+            </div>
+            <div class="sidebar-item" data-target="tools">
+              <span>🍎 实用工具</span>
+            </div>
+            <div class="sidebar-item" data-target="news">
+              <span>✈️ 新闻资讯</span>
+            </div>
+            <div class="sidebar-item" data-target="entertainment">
+              <span>🎡 休闲娱乐</span>
+            </div>
+            <div class="sidebar-item" data-target="design">
+              <span>❤️ 设计模块</span>
+            </div>
+            <div class="sidebar-item" data-target="code">
+              <span>♻️ 编程模块</span>
+            </div>
+            <div class="sidebar-item" data-target="tuijian">
+              <span>💬 推荐内容</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- 主内容区域 -->
+      <main class="flex-1">
+        <!-- 仪表盘内容 -->
+        <section id="dashboard" class="content-section active">
+          <!-- 头部信息 -->
+          <header class="mb-6 animate-fade-in">
             <div
-              class="bg-white p-2 rounded-lg border border-gray-100 flex items-center gap-2 shadow-sm"
+              class="flex flex-col md:flex-row md:items-center justify-between gap-4"
             >
-              <i class="fa fa-sun-o text-yellow-500"></i>
-              <span id="weather">25°C 晴朗</span>
+              <div>
+                <h2
+                  id="greeting"
+                  class="text-[clamp(1.4rem,3vw,2rem)] font-bold text-shadow"
+                >
+                  早上好！
+                </h2>
+                <p id="date" class="text-gray-500">2023年1月1日 星期一</p>
+              </div>
+
+              <div class="flex items-center gap-2">
+                <div
+                  class="bg-white p-2 rounded-lg border border-gray-100 flex items-center gap-2 shadow-sm"
+                >
+                  <i class="fa fa-sun-o text-yellow-500"></i>
+                  <span id="weather">25°C 晴朗</span>
+                </div>
+                <div
+                  id="time"
+                  class="bg-white p-2 rounded-lg border border-gray-100 font-mono shadow-sm"
+                >
+                  00:00:00
+                </div>
+              </div>
+            </div>
+          </header>
+
+          <!-- 搜索框和搜索引擎切换按钮 -->
+          <section class="mb-7 animate-fade-in">
+            <!-- 搜索引擎切换按钮组 - 按键式切换 -->
+            <div class="flex flex-wrap gap-2 max-w-2xl mx-auto mb-3">
+              <button
+                class="engine-btn active px-3 py-1.5 text-sm rounded-full bg-primary text-white flex items-center gap-1.5"
+                data-engine="sogou"
+              >
+                <span>搜狗</span>
+              </button>
+              <button
+                class="engine-btn px-3 py-1.5 text-sm rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 flex items-center gap-1.5"
+                data-engine="baidu"
+              >
+                <span>百度</span>
+              </button>
+
+              <button
+                class="engine-btn px-3 py-1.5 text-sm rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 flex items-center gap-1.5"
+                data-engine="bing"
+              >
+                <span>必应</span>
+              </button>
+              <button
+                class="engine-btn px-3 py-1.5 text-sm rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 flex items-center gap-1.5"
+                data-engine="google"
+              >
+                <span>谷歌</span>
+              </button>
+            </div>
+
+            <!-- 搜索框 -->
+            <div class="relative max-w-2xl mx-auto">
+              <div
+                class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"
+              >
+                🔎
+              </div>
+              <input
+                type="text"
+                id="search-input"
+                placeholder="搜索..."
+                class="w-full pl-12 pr-16 py-3.5 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all shadow-sm"
+              />
+              <!-- 搜索按钮 -->
+              <button
+                id="search-button"
+                class="absolute inset-y-0 right-0 pr-4 flex items-center text-primary hover:text-primary/80 transition-colors"
+              >
+                <span class="ml-1 text-sm font-medium">搜索</span>
+              </button>
+            </div>
+          </section>
+
+          <!-- 快速访问 -->
+          <section class="mb-7 animate-fade-in">
+            <div class="flex justify-between items-center mb-4">
+              <h3 class="font-semibold">常用网站</h3>
             </div>
             <div
-              class="bg-white p-2 rounded-lg border border-gray-100 font-mono shadow-sm"
-              id="time"
+              id="quick-access-container"
+              class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 lg:grid-cols-6 gap-3"
             >
-              00:00:00
+              <!-- 内容将通过JS动态生成 -->
+            </div>
+          </section>
+
+          <!-- 所有分类导航区域 -->
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+            <!-- 左侧+中间 -->
+            <div class="col-span-2">
+              <!-- 便签 -->
+              <div class="space-y-5">
+                <div
+                  class="bg-white rounded-lg p-4 border border-gray-100 animate-fade-in shadow-sm"
+                >
+                  <h3 class="font-semibold mb-3 flex items-center">✏️ 便签</h3>
+                  <div class="space-y-3">
+                    <div>
+                      <textarea
+                        id="text"
+                        placeholder="输入临时笔记"
+                        class="w-full border border-gray-200 rounded p-2 h-24 text-sm focus:border-primary focus:ring-2 focus:ring-primary/20"
+                        style="outline: none !important"
+                      ></textarea>
+                    </div>
+                    <div class="flex gap-2">
+                      <button
+                        id="saveText"
+                        class="w-full border border-primary text-primary text-xs rounded p-2 hover:bg-primary/10"
+                      >
+                        保存
+                      </button>
+                      <button
+                        id="delText"
+                        class="w-full border border-primary text-primary text-xs rounded p-2 hover:bg-primary/10"
+                      >
+                        清空
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- 天气模块 -->
+              <div class="space-y-5 mt-5">
+                <div
+                  class="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg p-4 text-white animate-fade-in shadow-md"
+                >
+                  <h3 class="font-semibold mb-3 flex items-center">
+                    <i class="fa fa-cloud mr-2"></i>
+                    🌞 日照未来3天天气预报
+                  </h3>
+
+                  <div id="weather0" class="space-y-3">
+                    <div class="flex justify-between items-center">
+                      <span id="day1">今天</span>
+                      <div class="flex items-center">
+                        <span id="weather1">25°C</span>
+                      </div>
+                    </div>
+                    <div class="flex justify-between items-center">
+                      <span id="day2">明天</span>
+                      <div class="flex items-center">
+                        <span id="weather2">22°C</span>
+                      </div>
+                    </div>
+                    <div class="flex justify-between items-center">
+                      <span id="day3">后天</span>
+                      <div class="flex items-center">
+                        <span id="weather3">19°C</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- 右侧 -->
+            <div class="col-span-1">
+              <!-- 名人名言 -->
+              <div class="space-y-5">
+                <div
+                  class="bg-white rounded-lg p-4 border border-gray-100 animate-fade-in shadow-sm"
+                >
+                  <h3 class="font-semibold mb-3 flex items-center">
+                    💡 每日一言
+                  </h3>
+                  <div class="space-y-3">
+                    <!-- <div class="w-full rounded text-sm"> -->
+                    <p id="p1" class="text-sm text-justify"></p>
+                    <p id="p2" class="text-sm text-right"></p>
+                    <!-- </div> -->
+                  </div>
+                </div>
+              </div>
+              <!-- 待办事项 -->
+              <div class="space-y-5 mt-5">
+                <div
+                  class="bg-white rounded-lg p-4 border border-gray-100 animate-fade-in shadow-sm"
+                >
+                  <div class="flex justify-between items-center mb-4">
+                    <h3 class="font-semibold flex items-center">📒 待办事项</h3>
+                    <span
+                      id="todo-count"
+                      class="text-xs bg-gray-100 px-2 py-0.5 rounded-full"
+                    >
+                      0/0
+                    </span>
+                  </div>
+
+                  <!-- 待办事项列表 -->
+                  <div id="todo-list" class="space-y-2 mb-3">
+                    <!-- 内容将通过JS从本地存储加载 -->
+                  </div>
+
+                  <!-- 添加待办事项 -->
+                  <div class="flex gap-3">
+                    <input
+                      type="text"
+                      id="new-todo"
+                      placeholder="添加新任务..."
+                      class="flex-grow px-3 py-2 text-sm border border-gray-200 rounded focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                    />
+                    <button
+                      id="add-todo"
+                      class="text-xs bg-primary text-white px-3 py-2 rounded text-sm text-nowrap hover:bg-primary/90 transition-colors"
+                    >
+                      添加
+                    </button>
+                  </div>
+
+                  <!-- 进度条 -->
+                  <div class="mt-5">
+                    <div class="flex justify-between text-xs mb-1">
+                      <span>完成进度</span>
+                      <span id="progress-name">40%</span>
+                    </div>
+                    <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
+                      <div
+                        id="progress"
+                        class="h-full bg-blue-500 rounded-full"
+                      ></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </header>
+        </section>
 
-      <!-- 搜索框和搜索引擎切换按钮 -->
-      <section class="mb-7 animate-fade-in" style="animation-delay: 0.1s">
-        <!-- 搜索引擎切换按钮组 - 按键式切换 -->
-        <div class="flex flex-wrap gap-2 max-w-2xl mx-auto mb-3">
-          <button
-            class="engine-btn active px-3 py-1.5 text-sm rounded-full bg-primary text-white flex items-center gap-1.5"
-            data-engine="baidu"
-          >
-            <i class="fa fa-search"></i>
-            <span>百度</span>
-          </button>
-          <button
-            class="engine-btn px-3 py-1.5 text-sm rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 flex items-center gap-1.5"
-            data-engine="sogou"
-          >
-            <i class="fa fa-paw"></i>
-            <span>搜狗</span>
-          </button>
-          <button
-            class="engine-btn px-3 py-1.5 text-sm rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 flex items-center gap-1.5"
-            data-engine="bing"
-          >
-            <i class="fa fa-globe"></i>
-            <span>必应</span>
-          </button>
-          <button
-            class="engine-btn px-3 py-1.5 text-sm rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 flex items-center gap-1.5"
-            data-engine="google"
-          >
-            <i class="fa fa-google"></i>
-            <span>谷歌</span>
-          </button>
-        </div>
-
-        <!-- 搜索框 -->
-        <div class="relative max-w-2xl mx-auto">
-          <div
-            class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"
-          >
-            <i class="fa fa-search text-gray-400"></i>
+        <!-- 学习资源内容 -->
+        <section id="study" class="content-section">
+          <div class="mb-6 animate-fade-in">
+            <h2 class="text-2xl font-bold mb-2">学习资源</h2>
+            <p class="text-gray-500">精选各类学习平台和教育资源</p>
           </div>
-          <input
-            type="text"
-            id="search-input"
-            placeholder="搜索..."
-            class="w-full pl-12 pr-16 py-3.5 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all shadow-sm"
-          />
-          <!-- 搜索按钮 -->
-          <button
-            id="search-button"
-            class="absolute inset-y-0 right-0 pr-4 flex items-center text-primary hover:text-primary/80 transition-colors"
-          >
-            <i class="fa fa-search"></i>
-            <span class="ml-1 text-sm font-medium">搜索</span>
-          </button>
-        </div>
-      </section>
-
-      <!-- 快速访问 -->
-      <section class="mb-7 animate-fade-in" style="animation-delay: 0.2s">
-        <div class="flex justify-between items-center mb-4">
-          <h3 class="font-semibold">常用网站</h3>
-        </div>
-
-        <div
-          id="quick-access-container"
-          class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3"
-        >
-          <!-- 内容将通过JS动态生成 -->
-        </div>
-      </section>
-
-      <!-- 所有分类导航区域 -->
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
-        <!-- 左侧和中间：分类导航 -->
-        <div class="lg:col-span-2 space-y-5">
           <!-- 学习资源 -->
           <div
-            class="bg-white rounded-lg p-4 border border-gray-100 animate-fade-in shadow-sm"
-            style="animation-delay: 0.3s"
+            class="bg-white rounded-lg p-4 mt-4 border border-gray-100 animate-fade-in shadow-sm"
           >
-            <h3 class="font-semibold mb-3 flex items-center">
-              <div
-                class="w-7 h-7 rounded bg-blue-50 flex items-center justify-center mr-2"
-              >
-                <i class="fa fa-book text-blue-500 text-sm"></i>
-              </div>
-              学习资源
-            </h3>
+            <h3 class="font-semibold mb-3 flex items-center">学习资源</h3>
             <div
               id="study-resources-container"
-              class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2"
+              class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2"
             >
               <!-- 内容将通过JS动态生成 -->
             </div>
           </div>
+        </section>
 
-          <!-- AI工具模块 -->
+        <!-- 就业招聘 -->
+        <section id="jobs" class="content-section">
+          <div class="mb-6 animate-fade-in">
+            <h2 class="text-2xl font-bold mb-2">就业招聘</h2>
+            <p class="text-gray-500">最新招聘信息和考试资源</p>
+          </div>
+          <!-- 考试日历 -->
           <div
             class="bg-white rounded-lg p-4 border border-gray-100 animate-fade-in shadow-sm"
-            style="animation-delay: 0.35s"
           >
-            <h3 class="font-semibold mb-3 flex items-center">
-              <div
-                class="w-7 h-7 rounded bg-blue-50 flex items-center justify-center mr-2"
-              >
-                <i class="fa fa-feed text-blue-500 text-sm"></i>
+            <h3 class="font-semibold mb-3">考试日历</h3>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+              <!-- 笔试栏 -->
+              <div id="bishi" class="space-y-3">
+                <!-- 内容将通过JS动态生成 -->
               </div>
-              AI工具
-            </h3>
+              <!-- 面试栏 -->
+              <div id="mianshi" class="space-y-3">
+                <!-- 内容将通过JS动态生成 -->
+              </div>
+            </div>
+          </div>
+          <!-- 就业招聘 -->
+          <div
+            class="bg-white rounded-lg p-4 mt-4 border border-gray-100 animate-fade-in shadow-sm"
+          >
+            <h3 class="font-semibold mb-3 flex items-center">招聘信息</h3>
+            <div
+              id="job-info-container-1"
+              class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2"
+            >
+              <!-- 内容将通过JS动态生成 -->
+            </div>
+          </div>
+          <div
+            class="bg-white rounded-lg p-4 mt-4 border border-gray-100 animate-fade-in shadow-sm"
+          >
+            <h3 class="font-semibold mb-3 flex items-center">招聘简历</h3>
+            <div
+              id="job-info-container-2"
+              class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2"
+            >
+              <!-- 内容将通过JS动态生成 -->
+            </div>
+          </div>
+        </section>
+
+        <!-- 实用工具 -->
+        <section id="tools" class="content-section">
+          <div class="mb-6 animate-fade-in">
+            <h2 class="text-2xl font-bold mb-2">实用工具</h2>
+            <p class="text-gray-500">日常生活和工作所需的各类工具</p>
+          </div>
+          <!-- 实用工具 -->
+          <div
+            class="bg-white rounded-lg p-4 mt-4 border border-gray-100 animate-fade-in shadow-sm"
+          >
+            <h3 class="font-semibold mb-3 flex items-center">实用工具</h3>
+            <div
+              id="tools-container"
+              class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2"
+            >
+              <!-- 内容将通过JS动态生成 -->
+            </div>
+          </div>
+          <div
+            class="bg-white rounded-lg p-4 mt-4 border border-gray-100 animate-fade-in shadow-sm"
+          >
+            <h3 class="font-semibold mb-3 flex items-center">AI工具</h3>
             <div
               id="AI-container"
-              class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2"
+              class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2"
             >
               <!-- 内容将通过JS动态生成 -->
             </div>
           </div>
+        </section>
 
-          <!-- 招聘模块 -->
+        <!-- 新闻资讯 -->
+        <section id="news" class="content-section">
+          <div class="mb-6 animate-fade-in">
+            <h2 class="text-2xl font-bold mb-2">新闻资讯</h2>
+            <p class="text-gray-500">最新时事新闻和行业资讯</p>
+          </div>
+          <!-- 实用工具 -->
           <div
-            class="bg-white rounded-lg p-4 border border-gray-100 animate-fade-in shadow-sm"
-            style="animation-delay: 0.35s"
+            class="bg-white rounded-lg p-4 mt-4 border border-gray-100 animate-fade-in shadow-sm"
           >
-            <h3 class="font-semibold mb-3 flex items-center">
-              <div
-                class="w-7 h-7 rounded bg-indigo-50 flex items-center justify-center mr-2"
-              >
-                <i class="fa fa-briefcase text-indigo-500 text-sm"></i>
-              </div>
-              考试招聘
-            </h3>
+            <h3 class="font-semibold mb-3 flex items-center">官方新闻</h3>
             <div
-              id="job-info-container"
-              class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2"
+              id="news-container-1"
+              class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2"
             >
               <!-- 内容将通过JS动态生成 -->
             </div>
           </div>
-
-          <!-- 新闻资讯 -->
           <div
-            class="bg-white rounded-lg p-4 border border-gray-100 animate-fade-in shadow-sm"
-            style="animation-delay: 0.4s"
+            class="bg-white rounded-lg p-4 mt-4 border border-gray-100 animate-fade-in shadow-sm"
           >
-            <h3 class="font-semibold mb-3 flex items-center">
-              <div
-                class="w-7 h-7 rounded bg-red-50 flex items-center justify-center mr-2"
-              >
-                <i class="fa fa-newspaper-o text-red-500 text-sm"></i>
-              </div>
-              新闻资讯
-            </h3>
+            <h3 class="font-semibold mb-3 flex items-center">社会资讯</h3>
             <div
-              id="news-container"
-              class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2"
+              id="news-container-2"
+              class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2"
             >
               <!-- 内容将通过JS动态生成 -->
             </div>
+          </div>
+        </section>
+
+        <!-- 休闲娱乐 -->
+        <section id="entertainment" class="content-section">
+          <div class="mb-6 animate-fade-in">
+            <h2 class="text-2xl font-bold mb-2">休闲娱乐</h2>
+            <p class="text-gray-500">休闲、影视、购物、音乐、游戏网站集合</p>
           </div>
 
           <!-- 休闲娱乐 -->
           <div
-            class="bg-white rounded-lg p-4 border border-gray-100 animate-fade-in shadow-sm"
-            style="animation-delay: 0.45s"
+            class="bg-white rounded-lg p-4 mt-4 border border-gray-100 animate-fade-in shadow-sm"
           >
-            <h3 class="font-semibold mb-3 flex items-center">
-              <div
-                class="w-7 h-7 rounded bg-green-50 flex items-center justify-center mr-2"
-              >
-                <i class="fa fa-gamepad text-green-500 text-sm"></i>
-              </div>
-              休闲娱乐
-            </h3>
+            <h3 class="font-semibold mb-3 flex items-center">导航</h3>
             <div
-              id="entertainment-container"
-              class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2"
+              id="entertainment-daohang-container"
+              class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2"
             >
               <!-- 内容将通过JS动态生成 -->
             </div>
           </div>
-
-          <!-- 影视视频 -->
           <div
-            class="bg-white rounded-lg p-4 border border-gray-100 animate-fade-in shadow-sm"
-            style="animation-delay: 0.45s"
+            class="bg-white rounded-lg p-4 mt-4 border border-gray-100 animate-fade-in shadow-sm"
           >
-            <h3 class="font-semibold mb-3 flex items-center">
-              <div
-                class="w-7 h-7 rounded bg-pink-50 flex items-center justify-center mr-2"
-              >
-                <i class="fa fa-video-camera text-pink-500 text-sm"></i>
-              </div>
-              影视视频
-            </h3>
+            <h3 class="font-semibold mb-3 flex items-center">休闲</h3>
             <div
-              id="film-container"
-              class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2"
+              id="entertainment-xiuxian-container"
+              class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2"
             >
               <!-- 内容将通过JS动态生成 -->
             </div>
           </div>
-
-          <!-- 购物消费 -->
           <div
-            class="bg-white rounded-lg p-4 border border-gray-100 animate-fade-in shadow-sm"
-            style="animation-delay: 0.5s"
+            class="bg-white rounded-lg p-4 mt-4 border border-gray-100 animate-fade-in shadow-sm"
           >
-            <h3 class="font-semibold mb-3 flex items-center">
-              <div
-                class="w-7 h-7 rounded bg-orange-50 flex items-center justify-center mr-2"
-              >
-                <i class="fa fa-shopping-cart text-orange-500 text-sm"></i>
-              </div>
-              购物消费
-            </h3>
+            <h3 class="font-semibold mb-3 flex items-center">影视</h3>
             <div
-              id="shopping-container"
-              class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2"
+              id="entertainment-yingshi-container"
+              class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2"
             >
               <!-- 内容将通过JS动态生成 -->
             </div>
           </div>
-
-          <!-- 实用工具 -->
           <div
-            class="bg-white rounded-lg p-4 border border-gray-100 animate-fade-in shadow-sm"
-            style="animation-delay: 0.55s"
+            class="bg-white rounded-lg p-4 mt-4 border border-gray-100 animate-fade-in shadow-sm"
           >
-            <h3 class="font-semibold mb-3 flex items-center">
-              <div
-                class="w-7 h-7 rounded bg-purple-50 flex items-center justify-center mr-2"
-              >
-                <i class="fa fa-wrench text-purple-500 text-sm"></i>
-              </div>
-              实用工具
-            </h3>
+            <h3 class="font-semibold mb-3 flex items-center">购物</h3>
             <div
-              id="tools-container"
-              class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2"
+              id="entertainment-gouwu-container"
+              class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2"
             >
               <!-- 内容将通过JS动态生成 -->
             </div>
           </div>
-
-          <!-- 设计导航 -->
           <div
-            class="bg-white rounded-lg p-4 border border-gray-100 animate-fade-in shadow-sm"
-            style="animation-delay: 0.6s"
+            class="bg-white rounded-lg p-4 mt-4 border border-gray-100 animate-fade-in shadow-sm"
           >
-            <h3 class="font-semibold mb-3 flex items-center">
-              <div
-                class="w-7 h-7 rounded bg-blue-50 flex items-center justify-center mr-2"
-              >
-                <i class="fa fa-map text-blue-500 text-sm"></i>
-              </div>
-              设计导航
-            </h3>
+            <h3 class="font-semibold mb-3 flex items-center">音乐</h3>
+            <div
+              id="entertainment-yinyue-container"
+              class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2"
+            >
+              <!-- 内容将通过JS动态生成 -->
+            </div>
+          </div>
+          <div
+            class="bg-white rounded-lg p-4 mt-4 border border-gray-100 animate-fade-in shadow-sm"
+          >
+            <h3 class="font-semibold mb-3 flex items-center">壁纸</h3>
+            <div
+              id="entertainment-bizhi-container"
+              class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2"
+            >
+              <!-- 内容将通过JS动态生成 -->
+            </div>
+          </div>
+          <div
+            class="bg-white rounded-lg p-4 mt-4 border border-gray-100 animate-fade-in shadow-sm"
+          >
+            <h3 class="font-semibold mb-3 flex items-center">游戏</h3>
+            <div
+              id="entertainment-youxi-container"
+              class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2"
+            >
+              <!-- 内容将通过JS动态生成 -->
+            </div>
+          </div>
+        </section>
+
+        <!-- 设计模块 -->
+        <section id="design" class="content-section">
+          <div class="mb-6 animate-fade-in">
+            <h2 class="text-2xl font-bold mb-2">设计模块</h2>
+            <p class="text-gray-500">设计工作所需的各类工具</p>
+          </div>
+          <!-- 设计模块 -->
+          <div
+            class="bg-white rounded-lg p-4 mt-4 border border-gray-100 animate-fade-in shadow-sm"
+          >
+            <h3 class="font-semibold mb-3 flex items-center">游戏</h3>
             <div
               id="design-container"
-              class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2"
+              class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2"
             >
               <!-- 内容将通过JS动态生成 -->
             </div>
           </div>
+        </section>
 
-          <!-- 常用文档 -->
+        <!-- 编程模块 -->
+        <section id="code" class="content-section">
+          <div class="mb-6 animate-fade-in">
+            <h2 class="text-2xl font-bold mb-2">编程模块</h2>
+            <p class="text-gray-500">编程工作所需的各类工具</p>
+          </div>
+          <!-- 学习路径 -->
           <div
             class="bg-white rounded-lg p-4 border border-gray-100 animate-fade-in shadow-sm"
-            style="animation-delay: 0.6s"
           >
-            <h3 class="font-semibold mb-3 flex items-center">
+            <h3 class="font-semibold mb-3">学习路径</h3>
+            <div class="space-y-3">
               <div
-                class="w-7 h-7 rounded bg-blue-50 flex items-center justify-center mr-2"
+                class="p-3 border border-gray-100 rounded-lg hover:border-primary/30 transition-colors"
               >
-                <i class="fa fa-book text-blue-500 text-sm"></i>
+                <h4 class="font-medium">前端开发</h4>
+                <p class="text-sm text-gray-500 mt-1">
+                  <a href="./1.h5c3.html" class="hover:underline">HTML5/CSS3</a>
+                  →
+                  <a href="./2.JavaScript.html" class="hover:underline"
+                    >JavaScript</a
+                  >
+                  → <a href="./3.ES6.html" class="hover:underline">ES6</a> →
+                  <a href="./Nodejs.html" class="hover:underline">Node.js</a> →
+                  <a href="./bao.html" class="hover:underline">包管理工具</a> →
+                  <a href="./dabao.html" class="hover:underline">打包工具</a> →
+                  <a href="./Vue.html" class="hover:underline">Vue</a> →
+                  <a href="./React.html" class="hover:underline">React</a> →
+                  <a href="./Angular.html" class="hover:underline">Angular</a>
+                </p>
               </div>
-              常用文档
-            </h3>
+              <div
+                class="p-3 border border-gray-100 rounded-lg hover:border-primary/30 transition-colors"
+              >
+                <h4 class="font-medium">后端开发</h4>
+                <p class="text-sm text-gray-500 mt-1">
+                  Python/Java → 框架学习 → 数据库 → 服务器部署
+                </p>
+              </div>
+            </div>
+          </div>
+          <!-- 编程模块 -->
+          <div
+            class="bg-white rounded-lg p-4 mt-4 border border-gray-100 animate-fade-in shadow-sm"
+          >
+            <h3 class="font-semibold mb-3 flex items-center">软件安装</h3>
             <div
-              id="word-container"
-              class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2"
+              id="code-ruanjian-container"
+              class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2"
             >
               <!-- 内容将通过JS动态生成 -->
             </div>
           </div>
-        </div>
-
-        <!-- 右侧：功能模块 -->
-        <div class="space-y-5">
-          <!-- 便签 -->
           <div
-            class="bg-white rounded-lg p-4 border border-gray-100 animate-fade-in shadow-sm"
-            style="animation-delay: 0.55s"
+            class="bg-white rounded-lg p-4 mt-4 border border-gray-100 animate-fade-in shadow-sm"
           >
-            <h3 class="font-semibold mb-3 flex items-center">
+            <h3 class="font-semibold mb-3 flex items-center">导航</h3>
+            <div
+              id="code-daohang-container"
+              class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2"
+            >
+              <!-- 内容将通过JS动态生成 -->
+            </div>
+          </div>
+          <div
+            class="bg-white rounded-lg p-4 mt-4 border border-gray-100 animate-fade-in shadow-sm"
+          >
+            <h3 class="font-semibold mb-3 flex items-center">文档</h3>
+            <div
+              id="code-wendang-container"
+              class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2"
+            >
+              <!-- 内容将通过JS动态生成 -->
+            </div>
+          </div>
+          <div
+            class="bg-white rounded-lg p-4 mt-4 border border-gray-100 animate-fade-in shadow-sm"
+          >
+            <h3 class="font-semibold mb-3 flex items-center">CDN</h3>
+            <div
+              id="code-cdn-container"
+              class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2"
+            >
+              <!-- 内容将通过JS动态生成 -->
+            </div>
+          </div>
+          <div
+            class="bg-white rounded-lg p-4 mt-4 border border-gray-100 animate-fade-in shadow-sm"
+          >
+            <h3 class="font-semibold mb-3 flex items-center">API</h3>
+            <div
+              id="code-api-container"
+              class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2"
+            >
+              <!-- 内容将通过JS动态生成 -->
+            </div>
+          </div>
+          <div
+            class="bg-white rounded-lg p-4 mt-4 border border-gray-100 animate-fade-in shadow-sm"
+          >
+            <h3 class="font-semibold mb-3 flex items-center">小工具</h3>
+            <div
+              id="code-gongju-container"
+              class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2"
+            >
+              <!-- 内容将通过JS动态生成 -->
+            </div>
+          </div>
+        </section>
+
+        <!-- 推荐内容 -->
+        <section id="tuijian" class="content-section">
+          <div class="mb-6 animate-fade-in">
+            <h2 class="text-2xl font-bold mb-2">推荐内容</h2>
+            <p class="text-gray-500">好看的电影推荐</p>
+          </div>
+          <!-- 所有分类导航区域 -->
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+            <!-- 左侧 -->
+            <div class="col-span-1">
               <div
-                class="w-7 h-7 rounded bg-green-50 flex items-center justify-center mr-2"
+                class="bg-white rounded-lg p-4 border border-gray-100 animate-fade-in shadow-sm"
               >
-                <i class="fa fa-pencil text-green-500 text-sm"></i>
-              </div>
-              便签
-            </h3>
-
-            <div class="space-y-3">
-              <div>
-                <textarea
-                  placeholder="输入临时笔记（刷新或重新打开时会自动删除）"
-                  class="w-full border border-gray-200 rounded p-2 h-32 text-sm"
-                  style="outline: none !important"
-                ></textarea>
-              </div>
-            </div>
-          </div>
-
-          <!-- 待办事项 -->
-          <div
-            class="bg-white rounded-lg p-4 border border-gray-100 animate-fade-in shadow-sm"
-            style="animation-delay: 0.6s"
-          >
-            <div class="flex justify-between items-center mb-4">
-              <h3 class="font-semibold flex items-center">
-                <div
-                  class="w-7 h-7 rounded bg-yellow-50 flex items-center justify-center mr-2"
-                >
-                  <i class="fa fa-list-alt text-yellow-500 text-sm"></i>
+                <h3 class="font-semibold mb-3 flex items-center">电影推荐</h3>
+                <div class="space-y-3">
+                  <ul id="tuijian1-container"></ul>
                 </div>
-                待办事项
-              </h3>
-              <span
-                id="todo-count"
-                class="text-xs bg-gray-100 px-2 py-0.5 rounded-full"
-              >
-                0/0
-              </span>
+              </div>
             </div>
-
-            <!-- 待办事项列表 -->
-            <div id="todo-list" class="space-y-2 mb-3">
-              <!-- 内容将通过JS从本地存储加载 -->
-            </div>
-
-            <!-- 添加待办事项 -->
-            <div class="flex gap-2">
-              <input
-                type="text"
-                id="new-todo"
-                placeholder="添加新任务..."
-                class="flex-grow px-3 py-2 text-sm border border-gray-200 rounded focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-              />
-              <button
-                id="add-todo"
-                class="bg-primary text-white px-3 py-2 rounded text-sm hover:bg-primary/90 transition-colors"
-              >
-                <i class="fa fa-plus"></i>
-              </button>
-            </div>
-          </div>
-
-          <!-- 完成进度 -->
-          <div
-            class="bg-white rounded-lg p-4 border border-gray-100 animate-fade-in shadow-sm"
-            style="animation-delay: 0.65s"
-          >
-            <h3 class="font-semibold mb-3 flex items-center">
+            <!-- 中间 -->
+            <div class="col-span-1">
               <div
-                class="w-7 h-7 rounded bg-purple-50 flex items-center justify-center mr-2"
+                class="bg-white rounded-lg p-4 border border-gray-100 animate-fade-in shadow-sm"
               >
-                <i class="fa fa-tasks text-purple-500 text-sm"></i>
-              </div>
-              完成进度
-            </h3>
-
-            <div class="space-y-3">
-              <div>
-                <div class="flex justify-between text-xs mb-1">
-                  <span>学习计划</span>
-                  <span>65%</span>
-                </div>
-                <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
-                  <div
-                    class="h-full bg-blue-500 rounded-full progress-bar"
-                    style="--progress-width: 65%"
-                  ></div>
+                <h3 class="font-semibold mb-3 flex items-center">电视剧推荐</h3>
+                <div class="space-y-3">
+                  <ul id="tuijian2-container"></ul>
+                  <!-- 内容将通过JS动态生成 -->
                 </div>
               </div>
-
-              <div>
-                <div class="flex justify-between text-xs mb-1">
-                  <span>工作任务</span>
-                  <span>40%</span>
-                </div>
-                <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
-                  <div
-                    class="h-full bg-green-500 rounded-full progress-bar"
-                    style="--progress-width: 40%"
-                  ></div>
-                </div>
-              </div>
-
-              <div>
-                <div class="flex justify-between text-xs mb-1">
-                  <span>阅读目标</span>
-                  <span>80%</span>
-                </div>
-                <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
-                  <div
-                    class="h-full bg-yellow-500 rounded-full progress-bar"
-                    style="--progress-width: 80%"
-                  ></div>
-                </div>
-              </div>
-
-              <div>
-                <div class="flex justify-between text-xs mb-1">
-                  <span>健身计划</span>
-                  <span>30%</span>
-                </div>
-                <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
-                  <div
-                    class="h-full bg-red-500 rounded-full progress-bar"
-                    style="--progress-width: 30%"
-                  ></div>
+            </div>
+            <!-- 右侧 -->
+            <div class="col-span-1">
+              <div
+                class="bg-white rounded-lg p-4 border border-gray-100 animate-fade-in shadow-sm"
+              >
+                <h3 class="font-semibold mb-3 flex items-center">书籍推荐</h3>
+                <div class="space-y-3">
+                  <ul id="tuijian3-container"></ul>
+                  <!-- 内容将通过JS动态生成 -->
                 </div>
               </div>
             </div>
           </div>
-
-          <!-- 天气模块 -->
-          <div
-            class="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg p-4 text-white animate-fade-in shadow-md"
-            style="animation-delay: 0.75s"
-          >
-            <h3 class="font-semibold mb-3 flex items-center">
-              <i class="fa fa-cloud mr-2"></i>
-              日照未来3天天气预报
-            </h3>
-
-            <div class="space-y-3">
-              <div class="flex justify-between items-center">
-                <span>今天</span>
-                <div class="flex items-center">
-                  <!-- <i class="fa fa-sun-o text-yellow-300 mr-2"></i> -->
-                  <span id="weather1">25°C</span>
-                </div>
-              </div>
-              <div class="flex justify-between items-center">
-                <span>明天</span>
-                <div class="flex items-center">
-                  <!-- <i class="fa fa-cloud text-gray-200 mr-2"></i> -->
-                  <span id="weather2">22°C</span>
-                </div>
-              </div>
-              <div class="flex justify-between items-center">
-                <span>后天</span>
-                <div class="flex items-center">
-                  <!-- <i class="fa fa-tint text-blue-200 mr-2"></i> -->
-                  <span id="weather3">19°C</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <script>
-        // 网站数据 - 包含所有模块
-        const websiteData = {
-          // 快速访问网站
-          quickAccess: [
-            {
-              name: '哔哩哔哩',
-              url: 'https://www.bilibili.com',
-              icon: 'fa-play-circle',
-              iconColor: 'text-pink-500',
-              bgColor: 'bg-pink-50',
-            },
-            {
-              name: '抖音',
-              url: 'https://www.douyin.com',
-              icon: 'fa-music',
-              iconColor: 'text-red-500',
-              bgColor: 'bg-red-50',
-            },
-            {
-              name: '豆包',
-              url: 'https://www.doubao.com',
-              icon: 'fa-comments',
-              iconColor: 'text-blue-500',
-              bgColor: 'bg-blue-50',
-            },
-            {
-              name: '搜狗翻译',
-              url: 'https://fanyi.sogou.com',
-              icon: 'fa-language',
-              iconColor: 'text-orange-500',
-              bgColor: 'bg-orange-50',
-            },
-            {
-              name: 'QQ邮箱',
-              url: 'https://mail.qq.com',
-              icon: 'fa-envelope',
-              iconColor: 'text-green-500',
-              bgColor: 'bg-green-50',
-            },
-            {
-              name: 'GitHub',
-              url: 'https://github.com/',
-              icon: 'fa-github',
-              iconColor: 'text-gray-700',
-              bgColor: 'bg-gray-50',
-            },
-          ],
-
-          // 学习资源网站
-          studyResources: [
-            {
-              name: '粉笔题库',
-              url: 'https://www.fenbi.com/spa/tiku/guide/catalog/xingce?prefix=xingce',
-              icon: 'fa-graduation-cap',
-              iconColor: 'text-blue-500',
-            },
-            {
-              name: '党的知识学习词典',
-              url: 'https://www.12371.cn/special/cidian/',
-              icon: 'fa-newspaper-o',
-              iconColor: 'text-red-500',
-            },
-            {
-              name: '华图时政',
-              url: 'https://sydw.huatu.com/zhaokao/szrd/',
-              icon: 'fa-newspaper-o',
-              iconColor: 'text-orange-500',
-            },
-            {
-              name: '报纸大全',
-              url: 'https://www.dtdjzx.gov.cn/szlib/newspaper/index.jhtml',
-              icon: 'fa-newspaper-o',
-              iconColor: 'text-purple-500',
-            },
-            {
-              name: '国家法规数据库',
-              url: 'https://flk.npc.gov.cn/',
-              icon: 'fa-university',
-              iconColor: 'text-green-500',
-            },
-            {
-              name: '食品伙伴网',
-              url: 'http://down.foodmate.net/',
-              icon: 'fa-university',
-              iconColor: 'text-red-500',
-            },
-            {
-              name: '标准信息服务平台',
-              url: 'https://hbba.sacinfo.org.cn/',
-              icon: 'fa-graduation-cap',
-              iconColor: 'text-blue-500',
-            },
-            {
-              name: '中小学智慧教育平台',
-              url: 'https://basic.smartedu.cn/',
-              icon: 'fa-feed',
-              iconColor: 'text-blue-500',
-            },
-            {
-              name: '石墨文档',
-              url: 'https://shimo.im/',
-              icon: 'fa-question-circle',
-              iconColor: 'text-orange-500',
-            },
-            {
-              name: '道客巴巴',
-              url: 'https://www.doc88.com/',
-              icon: 'fa-comments',
-              iconColor: 'text-green-500',
-            },
-            {
-              name: '古诗文网',
-              url: 'https://www.gushiwen.cn/',
-              icon: 'fa-graduation-cap',
-              iconColor: 'text-yellow-500',
-            },
-            {
-              name: '刘文超Vin',
-              url: 'https://wenchaoedu.lanzouw.com/b01bej7ud?pwd=f687',
-              icon: 'fa-fire',
-              iconColor: 'text-blue-500',
-            },
-            {
-              name: '微信读书',
-              url: 'https://weread.qq.com/',
-              icon: 'fa-book',
-              iconColor: 'text-blue-500',
-            },
-            {
-              name: '第一试卷网',
-              url: 'https://www.shijuan1.com/#google_vignette',
-              icon: 'fa-file-code-o',
-              iconColor: 'text-pink-500',
-            },
-            {
-              name: '秘塔写作猫',
-              url: 'https://xiezuocat.com/?s=itab',
-              icon: 'fa-fire',
-              iconColor: 'text-orange-500',
-            },
-            {
-              name: 'PDF24',
-              url: 'https://tools.pdf24.org/zh/all-tools',
-              icon: 'fa-fire',
-              iconColor: 'text-yellow-500',
-            },
-          ],
-
-          // AI工具网站
-          AI: [
-            {
-              name: '豆包',
-              url: 'https://www.doubao.com/chat/',
-              icon: 'fa-feed',
-              iconColor: 'text-red-500',
-            },
-            {
-              name: 'deepseek',
-              url: 'https://chat.deepseek.com/',
-              icon: 'fa-feed',
-              iconColor: 'text-orange-500',
-            },
-            {
-              name: '文心一言',
-              url: 'https://yiyan.baidu.com/?utm_source=uisdc',
-              icon: 'fa-feed',
-              iconColor: 'text-yellow-500',
-            },
-            {
-              name: 'chatGPT',
-              url: 'https://chat.openai.com/',
-              icon: 'fa-feed',
-              iconColor: 'text-green-500',
-            },
-            {
-              name: 'AiPPT',
-              url: 'https://www.aippt.cn/',
-              icon: 'fa-feed',
-              iconColor: 'text-blue-500',
-            },
-            {
-              name: 'Midjourney',
-              url: 'https://www.midjourney.com/',
-              icon: 'fa-feed',
-              iconColor: 'text-purple-500',
-            },
-            {
-              name: 'Stable Diffusion',
-              url: 'https://www.uisdc.com/stable-diffusion',
-              icon: 'fa-feed',
-              iconColor: 'text-pink-500',
-            },
-            {
-              name: '优设AI导航',
-              url: 'https://hao.uisdc.com/ai/',
-              icon: 'fa-feed',
-              iconColor: 'text-red-500',
-            },
-          ],
-
-          // 考试招聘网站
-          jobInfo: [
-            {
-              name: '公考雷达',
-              url: 'https://www.gongkaoleida.com/',
-              icon: 'fa-flag',
-              iconColor: 'text-red-500',
-            },
-            {
-              name: '事业单位考试招聘网',
-              url: 'https://www.shiyebian.net/',
-              icon: 'fa-building',
-              iconColor: 'text-orange-500',
-            },
-            {
-              name: 'NTCE考试网',
-              url: 'https://ntce.neea.edu.cn',
-              icon: 'fa-users',
-              iconColor: 'text-yellow-500',
-            },
-            {
-              name: '山东人事考试信息网',
-              url: 'https://hrss.shandong.gov.cn/rsks/',
-              icon: 'fa-pencil',
-              iconColor: 'text-green-500',
-            },
-            {
-              name: '中国人事考试网',
-              url: 'http://www.cpta.com.cn',
-              icon: 'fa-certificate',
-              iconColor: 'text-blue-500',
-            },
-            {
-              name: '全国专业技术人员资格考试报名服务平台',
-              url: 'https://zg.cpta.com.cn/examfront/login/initLogin.htm',
-              icon: 'fa-list-alt',
-              iconColor: 'text-purple-500',
-            },
-            {
-              name: 'BOSS直聘',
-              url: 'https://www.zhipin.com',
-              icon: 'fa-user',
-              iconColor: 'text-pink-500',
-            },
-            {
-              name: '智联招聘',
-              url: 'https://www.zhaopin.com',
-              icon: 'fa-search',
-              iconColor: 'text-red-500',
-            },
-            {
-              name: '齐鲁人才网',
-              url: 'https://www.qlrc.com',
-              icon: 'fa-map-marker',
-              iconColor: 'text-orange-500',
-            },
-
-            {
-              name: '前程无忧',
-              url: 'https://www.51job.com',
-              icon: 'fa-briefcase',
-              iconColor: 'text-yellow-500',
-            },
-            {
-              name: '猎聘网',
-              url: 'https://www.liepin.com',
-              icon: 'fa-user-circle',
-              iconColor: 'text-green-500',
-            },
-            {
-              name: '中国公共招聘网',
-              url: 'http://job.mohrss.gov.cn/',
-              icon: 'fa-users',
-              iconColor: 'text-blue-500',
-            },
-            {
-              name: '中华英才网',
-              url: 'https://www.chinahr.com',
-              icon: 'fa-users',
-              iconColor: 'text-purple-500',
-            },
-          ],
-
-          // 新闻资讯网站
-          news: [
-            {
-              name: '共产党员网',
-              url: 'https://www.12371.cn/',
-              icon: 'fa-newspaper-o',
-              iconColor: 'text-red-500',
-            },
-            {
-              name: '求是网',
-              url: 'https://www.qstheory.cn/',
-              icon: 'fa-newspaper-o',
-              iconColor: 'text-orange-500',
-            },
-            {
-              name: '人民网',
-              url: 'http://www.people.com.cn/',
-              icon: 'fa-newspaper-o',
-              iconColor: 'text-yellow-400',
-            },
-            {
-              name: '人民日报',
-              url: 'https://paper.people.com.cn/',
-              icon: 'fa-newspaper-o',
-              iconColor: 'text-green-500',
-            },
-            {
-              name: '学习强国',
-              url: 'https://www.xuexi.cn/',
-              icon: 'fa-newspaper-o',
-              iconColor: 'text-blue-500',
-            },
-            {
-              name: '半月谈',
-              url: 'http://www.banyuetan.org/',
-              icon: 'fa-newspaper-o',
-              iconColor: 'text-purple-500',
-            },
-            {
-              name: '光明网',
-              url: 'https://www.gmw.cn/',
-              icon: 'fa-newspaper-o',
-              iconColor: 'text-pink-500',
-            },
-            {
-              name: '光明日报',
-              url: 'https://epaper.gmw.cn/gmrb/',
-              icon: 'fa-newspaper-o',
-              iconColor: 'text-red-500',
-            },
-            {
-              name: '央视网',
-              url: 'https://www.cctv.com/',
-              icon: 'fa-newspaper-o',
-              iconColor: 'text-orange-500',
-            },
-            {
-              name: '央视网新闻直播',
-              url: 'https://news.cctv.com/',
-              icon: 'fa-newspaper-o',
-              iconColor: 'text-yellow-500',
-            },
-            {
-              name: '闪电新闻',
-              url: 'https://sdxw.iqilu.com/',
-              icon: 'fa-newspaper-o',
-              iconColor: 'text-green-500',
-            },
-            {
-              name: '学信网',
-              url: 'https://account.chsi.com.cn/',
-              icon: 'fa-newspaper-o',
-              iconColor: 'text-blue-500',
-            },
-            {
-              name: '百度新闻',
-              url: 'https://news.baidu.com',
-              icon: 'fa-newspaper-o',
-              iconColor: 'text-purple-500',
-            },
-            {
-              name: '新浪新闻',
-              url: 'https://news.sina.com.cn',
-              icon: 'fa-newspaper-o',
-              iconColor: 'text-pink-500',
-            },
-            {
-              name: '腾讯新闻',
-              url: 'https://news.qq.com',
-              icon: 'fa-newspaper-o',
-              iconColor: 'text-red-500',
-            },
-            {
-              name: '网易新闻',
-              url: 'https://163.com',
-              icon: 'fa-newspaper-o',
-              iconColor: 'text-orange-500',
-            },
-            {
-              name: 'CNN',
-              url: 'https://cnn.com',
-              icon: 'fa-newspaper-o',
-              iconColor: 'text-yellow-500',
-            },
-            {
-              name: 'BBC新闻',
-              url: 'https://bbc.com',
-              icon: 'fa-newspaper-o',
-              iconColor: 'text-green-500',
-            },
-            {
-              name: 'The Verge',
-              url: 'https://theverge.com',
-              icon: 'fa-newspaper-o',
-              iconColor: 'text-blue-500',
-            },
-            {
-              name: 'TechCrunch',
-              url: 'https://techcrunch.com',
-              icon: 'fa-newspaper-o',
-              iconColor: 'text-purple-500',
-            },
-            {
-              name: '36氪',
-              url: 'https://36kr.com',
-              icon: 'fa-newspaper-o',
-              iconColor: 'text-pink-500',
-            },
-            {
-              name: '虎嗅网',
-              url: 'https://huxiu.com',
-              icon: 'fa-newspaper-o',
-              iconColor: 'text-red-500',
-            },
-            {
-              name: '财经新闻',
-              url: 'https://finance.sina.com.cn',
-              icon: 'fa-newspaper-o',
-              iconColor: 'text-orange-600',
-            },
-            {
-              name: '体育新闻',
-              url: 'https://sports.qq.com',
-              icon: 'fa-newspaper-o',
-              iconColor: 'text-yellow-500',
-            },
-          ],
-
-          // 休闲娱乐网站
-          entertainment: [
-            {
-              name: '微信',
-              url: 'https://weixin.qq.com/',
-              icon: 'fa-weixin',
-              iconColor: 'text-green-500',
-            },
-            {
-              name: 'QQ',
-              url: 'https://im.qq.com/',
-              icon: 'fa-qq',
-              iconColor: 'text-blue-500',
-            },
-            {
-              name: '微博',
-              url: 'https://weibo.com/',
-              icon: 'fa-weibo',
-              iconColor: 'text-red-500',
-            },
-            {
-              name: '贴吧',
-              url: 'https://tieba.baidu.com/',
-              icon: 'fa-comments',
-              iconColor: 'text-blue-500',
-            },
-            {
-              name: '虎扑',
-              url: 'https://www.hupu.com/',
-              icon: 'fa-futbol-o',
-              iconColor: 'text-red-500',
-            },
-            {
-              name: '天涯论坛',
-              url: 'https://www.tianya.im/',
-              icon: 'fa-globe',
-              iconColor: 'text-orange-500',
-            },
-            {
-              name: '知乎',
-              url: 'https://zhihu.com',
-              icon: 'fa-comments',
-              iconColor: 'text-blue-500',
-            },
-            {
-              name: '小红书',
-              url: 'https://xiaohongshu.com',
-              icon: 'fa-book',
-              iconColor: 'text-pink-500',
-            },
-            {
-              name: '豆瓣',
-              url: 'https://douban.com',
-              icon: 'fa-book',
-              iconColor: 'text-green-500',
-            },
-            {
-              name: '豆瓣小组',
-              url: 'https://www.douban.com/group/',
-              icon: 'fa-users',
-              iconColor: 'text-green-500',
-            },
-            {
-              name: '今日热榜',
-              url: 'https://rebang.today/',
-              icon: 'fa-picture-o',
-              iconColor: 'text-blue-500',
-            },
-            {
-              name: '今日热榜官网',
-              url: 'https://tophub.today/',
-              icon: 'fa-picture-o',
-              iconColor: 'text-orange-500',
-            },
-            {
-              name: 'QQ邮箱',
-              url: 'https://mail.qq.com/',
-              icon: 'fa-envelope',
-              iconColor: 'text-blue-500',
-            },
-            {
-              name: '网易163邮箱',
-              url: 'https://email.163.com/',
-              icon: 'fa-envelope',
-              iconColor: 'text-red-500',
-            },
-            {
-              name: '网易126邮箱',
-              url: 'https://m.126.com/',
-              icon: 'fa-envelope',
-              iconColor: 'text-orange-500',
-            },
-            {
-              name: 'Gmail邮箱',
-              url: 'https://mail.google.com/',
-              icon: 'fa-envelope',
-              iconColor: 'text-pink-500',
-            },
-            {
-              name: 'Steam',
-              url: 'https://steamcommunity.com',
-              icon: 'fa-gamepad',
-              iconColor: 'text-blue-500',
-            },
-            {
-              name: '小霸王红白机',
-              url: 'https://www.yikm.net/',
-              icon: 'fa-gamepad',
-              iconColor: 'text-red-500',
-            },
-            {
-              name: 'Poki（宝玩）',
-              url: 'https://poki.com/zh',
-              icon: 'fa-gamepad',
-              iconColor: 'text-blue-500',
-            },
-            {
-              name: '文王',
-              url: 'https://jinqiangua.911cha.com/',
-              icon: 'fa-gamepad',
-              iconColor: 'text-green-500',
-            },
-            {
-              name: '周易大学堂',
-              url: 'https://zydx.top/',
-              icon: 'fa-comments',
-              iconColor: 'text-purple-600',
-            },
-
-            {
-              name: '吉祥风水网',
-              url: 'https://www.gdjxfsw.com/pp/index.html',
-              icon: 'fa-book',
-              iconColor: 'text-green-500',
-            },
-            {
-              name: '全民万年历',
-              url: 'https://www.qmrl888.com/',
-              icon: 'fa-book',
-              iconColor: 'text-blue-600',
-            },
-            {
-              name: '万年历网',
-              url: 'https://www.wannianli3.com/',
-              icon: 'fa-book',
-              iconColor: 'text-purple-500',
-            },
-          ],
-
-          // 影视视频网站
-          film: [
-            {
-              name: '斗鱼直播',
-              url: 'https://douyu.com',
-              icon: 'fa-video-camera',
-              iconColor: 'text-orange-500',
-            },
-            {
-              name: '虎牙直播',
-              url: 'https://huya.com',
-              icon: 'fa-video-camera',
-              iconColor: 'text-yellow-500',
-            },
-            {
-              name: '哔哩哔哩',
-              url: 'https://bilibili.com',
-              icon: 'fa-play-circle',
-              iconColor: 'text-pink-600',
-            },
-            {
-              name: 'AcFun',
-              url: 'https://acfun.cn',
-              icon: 'fa-smile-o',
-              iconColor: 'text-orange-500',
-            },
-            {
-              name: '抖音',
-              url: 'https://www.douyin.com',
-              icon: 'fa-music',
-              iconColor: 'text-red-500',
-            },
-            {
-              name: '快手',
-              url: 'https://kuaishou.com',
-              icon: 'fa-camera',
-              iconColor: 'text-orange-500',
-            },
-            {
-              name: 'YouTube',
-              url: 'https://youtube.com',
-              icon: 'fa-youtube',
-              iconColor: 'text-red-600',
-            },
-            {
-              name: 'Twitch',
-              url: 'https://twitch.tv',
-              icon: 'fa-twitch',
-              iconColor: 'text-purple-600',
-            },
-            {
-              name: '爱奇艺iQIYI',
-              url: 'https://www.iqiyi.com/',
-              icon: 'fa-youtube-play',
-              iconColor: 'text-green-500',
-            },
-            {
-              name: '优酷',
-              url: 'https://www.youku.com/',
-              icon: 'fa-youtube-play',
-              iconColor: 'text-blue-500',
-            },
-            {
-              name: '腾讯视频',
-              url: 'https://v.qq.com/',
-              icon: 'fa-play-circle-o',
-              iconColor: 'text-green-500',
-            },
-            {
-              name: '搜狐视频',
-              url: 'https://tv.sohu.com/',
-              icon: 'fa-play-circle-o',
-              iconColor: 'text-red-500',
-            },
-            {
-              name: '咪咕视频',
-              url: 'https://www.miguvideo.com/',
-              icon: 'fa-bookmark',
-              iconColor: 'text-pink-500',
-            },
-            {
-              name: '土豆',
-              url: 'https://www.tudou.com/',
-              icon: 'fa-briefcase',
-              iconColor: 'text-orange-500',
-            },
-            {
-              name: 'FreeOK',
-              url: 'https://www.freeok.mobi/',
-              icon: 'fa-play-circle',
-              iconColor: 'text-red-500',
-            },
-            {
-              name: '百家讲坛',
-              url: 'https://tv.cctv.com/2012/10/24/VIDE1355211744527964.shtml?spm=C59377.PhY3mfGXKdo3.EmOwVbjiQP0D.2940',
-              icon: 'fa-newspaper-o',
-              iconColor: 'text-blue-500',
-            },
-          ],
-
-          // 消费购物网站
-          shopping: [
-            {
-              name: '淘宝',
-              url: 'https://taobao.com',
-              icon: 'fa-shopping-bag',
-              iconColor: 'text-orange-500',
-            },
-            {
-              name: '京东',
-              url: 'https://jd.com',
-              icon: 'fa-truck',
-              iconColor: 'text-red-500',
-            },
-            {
-              name: '拼多多',
-              url: 'https://pinduoduo.com',
-              icon: 'fa-users',
-              iconColor: 'text-red-500',
-            },
-            {
-              name: '苏宁易购',
-              url: 'https://suning.com',
-              icon: 'fa-home',
-              iconColor: 'text-yellow-500',
-            },
-            {
-              name: '亚马逊',
-              url: 'https://amazon.com',
-              icon: 'fa-globe',
-              iconColor: 'text-orange-600',
-            },
-            {
-              name: '唯品会',
-              url: 'https://vip.com',
-              icon: 'fa-tag',
-              iconColor: 'text-pink-500',
-            },
-            {
-              name: '天猫',
-              url: 'https://tmall.com',
-              icon: 'fa-shopping-basket',
-              iconColor: 'text-red-500',
-            },
-            {
-              name: '1688批发',
-              url: 'https://1688.com',
-              icon: 'fa-cubes',
-              iconColor: 'text-orange-500',
-            },
-            {
-              name: '美团',
-              url: 'https://meituan.com',
-              icon: 'fa-cutlery',
-              iconColor: 'text-yellow-500',
-            },
-            {
-              name: '饿了么',
-              url: 'https://ele.me',
-              icon: 'fa-cutlery',
-              iconColor: 'text-blue-500',
-            },
-            {
-              name: '考拉海购',
-              url: 'https://kaola.com',
-              icon: 'fa-globe',
-              iconColor: 'text-red-500',
-            },
-            {
-              name: '京东全球购',
-              url: 'https://jd.hk',
-              icon: 'fa-plane',
-              iconColor: 'text-red-500',
-            },
-          ],
-
-          // 实用工具网站
-          tools: [
-            {
-              name: '锤子在线工具网',
-              url: 'https://www.toolhelper.cn/',
-              icon: 'fa-wrench',
-              iconColor: 'text-red-500',
-            },
-            {
-              name: '站长工具',
-              url: 'https://tool.chinaz.com',
-              icon: 'fa-line-chart',
-              iconColor: 'text-orange-500',
-            },
-            {
-              name: '在线工具',
-              url: 'https://tool.lu',
-              icon: 'fa-cogs',
-              iconColor: 'text-yellow-500',
-            },
-            {
-              name: '在线OCR',
-              url: 'https://ocr.wdku.net/',
-              icon: 'fa-file-text-o',
-              iconColor: 'text-green-500',
-            },
-            {
-              name: '在线PS',
-              url: 'https://ps.gaoding.com/',
-              icon: 'fa-paint-brush',
-              iconColor: 'text-blue-500',
-            },
-            {
-              name: '思维导图',
-              url: 'https://www.processon.com/',
-              icon: 'fa-sitemap',
-              iconColor: 'text-purple-500',
-            },
-            {
-              name: '草料二维码',
-              url: 'https://cli.im/',
-              icon: 'fa-qrcode',
-              iconColor: 'text-pink-500',
-            },
-            {
-              name: '临时邮箱',
-              url: 'https://temp-mail.org/zh/',
-              icon: 'fa-envelope-o',
-              iconColor: 'text-red-500',
-            },
-            {
-              name: '在线计算器',
-              url: 'https://www.calculator.net/',
-              icon: 'fa-calculator',
-              iconColor: 'text-orange-500',
-            },
-            {
-              name: '正则工具',
-              url: 'https://regexr.com',
-              icon: 'fa-search',
-              iconColor: 'text-yellow-500',
-            },
-            {
-              name: 'JSON格式化',
-              url: 'https://www.json.cn/',
-              icon: 'fa-code',
-              iconColor: 'text-green-700',
-            },
-
-            {
-              name: '格式转换',
-              url: 'https://convertio.co/zh/',
-              icon: 'fa-exchange',
-              iconColor: 'text-blue-500',
-            },
-            {
-              name: '图片压缩',
-              url: 'https://tinypng.com',
-              icon: 'fa-compress',
-              iconColor: 'text-purple-500',
-            },
-            {
-              name: '颜色拾取器',
-              url: 'https://htmlcolorcodes.com/zh/',
-              icon: 'fa-eyedropper',
-              iconColor: 'text-pink-500',
-            },
-            {
-              name: '配色工具',
-              url: 'https://colorhunt.co',
-              icon: 'fa-paint-brush',
-              iconColor: 'text-red-500',
-            },
-            {
-              name: '函数图像',
-              url: 'https://zuotu.91maths.com/',
-              icon: 'fa-font',
-              iconColor: 'text-orange-500',
-            },
-            {
-              name: '特殊字符',
-              url: 'https://copypastecharacter.com',
-              icon: 'fa-font',
-              iconColor: 'text-yellow-500',
-            },
-            {
-              name: '千帆搜索',
-              url: 'https://www.niceso.net/',
-              icon: 'fa-search',
-              iconColor: 'text-green-500',
-            },
-            {
-              name: '猫狸云搜索',
-              url: 'https://www.maoliyun.com/',
-              icon: 'fa-search',
-              iconColor: 'text-blue-500',
-            },
-            {
-              name: '刘明野的工具箱',
-              url: 'https://tools.liumingye.cn/#google_vignette',
-              icon: 'fa-file-text-o',
-              iconColor: 'text-purple-500',
-            },
-            {
-              name: '米兔音乐',
-              url: 'https://www.qqmp3.vip/',
-              icon: 'fa-music',
-              iconColor: 'text-pink-500',
-            },
-          ],
-
-          // 设计导航网站
-          design: [
-            {
-              name: '优设导航',
-              url: 'https://hao.uisdc.com/',
-              icon: 'fa-picture-o',
-              iconColor: 'text-red-500',
-            },
-            {
-              name: '设计导航',
-              url: 'https://hao.shejidaren.com/',
-              icon: 'fa-picture-o',
-              iconColor: 'text-orange-500',
-            },
-            {
-              name: '奇迹秀',
-              url: 'https://www.qijishow.com/',
-              icon: 'fa-picture-o',
-              iconColor: 'text-yellow-500',
-            },
-            {
-              name: '搜图导航',
-              url: 'https://www.91sotu.com/',
-              icon: 'fa-picture-o',
-              iconColor: 'text-green-500',
-            },
-            {
-              name: '16导航',
-              url: 'https://16map.com/',
-              icon: 'fa-picture-o',
-              iconColor: 'text-blue-600',
-            },
-            {
-              name: '美叶',
-              url: 'https://www.meiye.art/',
-              icon: 'fa-picture-o',
-              iconColor: 'text-purple-500',
-            },
-            {
-              name: 'Uxmap',
-              url: 'https://www.uxmap.cn/',
-              icon: 'fa-picture-o',
-              iconColor: 'text-pink-500',
-            },
-            {
-              name: 'HiPPTER',
-              url: 'https://www.hippter.com/',
-              icon: 'fa-picture-o',
-              iconColor: 'text-red-500',
-            },
-            {
-              name: '花瓣网',
-              url: 'https://huaban.com/',
-              icon: 'fa-picture-o',
-              iconColor: 'text-orange-500',
-            },
-            {
-              name: '站酷ZCOOL',
-              url: 'https://www.zcool.com.cn/',
-              icon: 'fa-picture-o',
-              iconColor: 'text-yellow-500',
-            },
-            {
-              name: '觅元素',
-              url: 'https://www.51yuansu.com/',
-              icon: 'fa-picture-o',
-              iconColor: 'text-green-500',
-            },
-            {
-              name: 'Canva可画',
-              url: 'https://www.canva.cn/',
-              icon: 'fa-picture-o',
-              iconColor: 'text-blue-500',
-            },
-            {
-              name: 'Behance',
-              url: 'https://www.behance.net/',
-              icon: 'fa-behance',
-              iconColor: 'text-blue-700',
-            },
-            {
-              name: 'Dribbble',
-              url: 'https://dribbble.com/',
-              icon: 'fa-dribbble',
-              iconColor: 'text-pink-500',
-            },
-            {
-              name: 'UI中国',
-              url: 'https://www.ui.cn/',
-              icon: 'fa-desktop',
-              iconColor: 'text-orange-500',
-            },
-            {
-              name: 'Pinterest',
-              url: 'https://pinterest.com/',
-              icon: 'fa-pinterest',
-              iconColor: 'text-red-600',
-            },
-          ],
-
-          // 常用文档网站
-          word: [
-            {
-              name: 'VsCode',
-              url: 'https://code.visualstudio.com/',
-              icon: 'fa-code',
-              iconColor: 'text-red-500',
-            },
-            {
-              name: 'Visual Studio',
-              url: 'https://visualstudio.microsoft.com/zh-hans/vs/',
-              icon: 'fa-code',
-              iconColor: 'text-orange-500',
-            },
-            {
-              name: 'HBuilderX',
-              url: 'https://www.dcloud.io/',
-              icon: 'fa-code',
-              iconColor: 'text-yellow-500',
-            },
-            {
-              name: 'Markdown',
-              url: 'https://markdown.p2hp.com/index.html',
-              icon: 'fa-code',
-              iconColor: 'text-green-500',
-            },
-            {
-              name: '菜鸟教程',
-              url: 'https://www.runoob.com',
-              icon: 'fa-code',
-              iconColor: 'text-blue-500',
-            },
-            {
-              name: 'W3Schools',
-              url: 'https://w3schools.com',
-              icon: 'fa-code',
-              iconColor: 'text-purple-500',
-            },
-            {
-              name: 'MDN',
-              url: 'https://developer.mozilla.org',
-              icon: 'fa-code',
-              iconColor: 'text-pink-500',
-            },
-            {
-              name: 'github',
-              url: 'https://github.com/',
-              icon: 'fa-code',
-              iconColor: 'text-red-500',
-            },
-            {
-              name: 'LeetCode',
-              url: 'https://leetcode.cn',
-              icon: 'fa-code',
-              iconColor: 'text-orange-500',
-            },
-            {
-              name: 'Stack Overflow',
-              url: 'https://stackoverflow.com',
-              icon: 'fa-code',
-              iconColor: 'text-yellow-500',
-            },
-            {
-              name: '思否',
-              url: 'https://segmentfault.com',
-              icon: 'fa-code',
-              iconColor: 'text-green-500',
-            },
-            {
-              name: '掘金',
-              url: 'https://juejin.cn',
-              icon: 'fa-code',
-              iconColor: 'text-blue-500',
-            },
-            {
-              name: 'jQuery',
-              url: 'https://jquery.com/',
-              icon: 'fa-code',
-              iconColor: 'text-purple-500',
-            },
-            {
-              name: 'jQuery中文',
-              url: 'https://www.jquery123.com/',
-              icon: 'fa-code',
-              iconColor: 'text-pink-500',
-            },
-            {
-              name: 'Bootstrap',
-              url: 'https://www.bootstraph.com/',
-              icon: 'fa-code',
-              iconColor: 'text-red-500',
-            },
-            {
-              name: 'TailwindCSS',
-              url: 'https://www.tailwindcss.cn/',
-              icon: 'fa-code',
-              iconColor: 'text-orange-500',
-            },
-            {
-              name: 'LayUI',
-              url: 'https://layui.dev/',
-              icon: 'fa-code',
-              iconColor: 'text-yellow-500',
-            },
-            {
-              name: 'WeUI',
-              url: 'https://weui.io/',
-              icon: 'fa-code',
-              iconColor: 'text-green-500',
-            },
-
-            {
-              name: 'Git',
-              url: 'https://git-scm.com/',
-              icon: 'fa-code',
-              iconColor: 'text-blue-500',
-            },
-            {
-              name: 'Node.js中文网',
-              url: 'https://nodejs.cn/',
-              icon: 'fa-code',
-              iconColor: 'text-purple-500',
-            },
-            {
-              name: 'npm中文文档',
-              url: 'https://www.npmjs.cn/',
-              icon: 'fa-code',
-              iconColor: 'text-pink-500',
-            },
-            {
-              name: 'Yarn中文文档',
-              url: 'https://www.yarnpkg.cn/',
-              icon: 'fa-code',
-              iconColor: 'text-red-500',
-            },
-            {
-              name: 'webpack',
-              url: 'https://webpack.js.org/',
-              icon: 'fa-code',
-              iconColor: 'text-orange-500',
-            },
-            {
-              name: 'webpack中文',
-              url: 'https://www.webpackjs.com/',
-              icon: 'fa-code',
-              iconColor: 'text-yellow-500',
-            },
-            {
-              name: 'Grunt',
-              url: 'https://www.gruntjs.net/',
-              icon: 'fa-code',
-              iconColor: 'text-green-500',
-            },
-            {
-              name: 'gulp.js',
-              url: 'https://www.gulpjs.com.cn/',
-              icon: 'fa-code',
-              iconColor: 'text-blue-500',
-            },
-            {
-              name: 'rollup.js',
-              url: 'https://www.rollupjs.com/',
-              icon: 'fa-code',
-              iconColor: 'text-purple-500',
-            },
-            {
-              name: 'Parcel',
-              url: 'https://www.parceljs.cn/',
-              icon: 'fa-code',
-              iconColor: 'text-pink-500',
-            },
-            {
-              name: 'Angular',
-              url: 'https://angular.cn/',
-              icon: 'fa-code',
-              iconColor: 'text-red-500',
-            },
-            {
-              name: 'React中文文档',
-              url: 'https://zh-hans.react.dev/',
-              icon: 'fa-code',
-              iconColor: 'text-orange-500',
-            },
-            {
-              name: 'Vue.js',
-              url: 'https://cn.vuejs.org/',
-              icon: 'fa-code',
-              iconColor: 'text-yellow-500',
-            },
-            {
-              name: 'Vue3',
-              url: 'https://vue3js.cn/global/',
-              icon: 'fa-code',
-              iconColor: 'text-green-500',
-            },
-            {
-              name: 'Postman',
-              url: 'https://www.postman.com/',
-              icon: 'fa-code',
-              iconColor: 'text-blue-500',
-            },
-            {
-              name: '接口大全',
-              url: 'https://www.free-api.com/',
-              icon: 'fa-code',
-              iconColor: 'text-purple-500',
-            },
-            {
-              name: 'chart.js',
-              url: 'https://www.chartjs.org/',
-              icon: 'fa-code',
-              iconColor: 'text-pink-500',
-            },
-            {
-              name: 'chart.js中文文档',
-              url: 'https://chartjs.bootcss.com/',
-              icon: 'fa-code',
-              iconColor: 'text-red-500',
-            },
-            {
-              name: 'Apache Echarts',
-              url: 'https://echarts.apache.org/zh/index.html',
-              icon: 'fa-code',
-              iconColor: 'text-orange-500',
-            },
-            {
-              name: 'python',
-              url: 'https://www.python.org/',
-              icon: 'fa-code',
-              iconColor: 'text-yellow-500',
-            },
-            {
-              name: 'JetBrains',
-              url: 'https://www.jetbrains.com/',
-              icon: 'fa-code',
-              iconColor: 'text-green-500',
-            },
-          ],
-        }
-
-        // 生成网站卡片
-        function generateWebsiteCards(
-          containerId,
-          websites,
-          isQuickAccess = false
-        ) {
-          const container = document.getElementById(containerId)
-          container.innerHTML = ''
-
-          websites.forEach((website) => {
-            const card = document.createElement('a')
-            card.href = website.url
-            card.target = '_blank'
-
-            if (isQuickAccess) {
-              card.className =
-                'website-card bg-white rounded-lg border border-gray-100 p-3 flex flex-col items-center justify-center text-center h-full'
-              card.innerHTML = `
-                <div class="w-10 h-10 rounded-full ${website.bgColor} flex items-center justify-center mb-2">
-                  <i class="fa ${website.icon} ${website.iconColor}"></i>
-                </div>
-                <span class="text-sm font-medium truncate w-full">${website.name}</span>
-              `
-            } else {
-              card.className =
-                'website-card bg-white rounded-lg border border-gray-100 p-3 flex items-center gap-2 hover:border-primary/30'
-              card.innerHTML = `
-                <div class="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center">
-                  <i class="fa ${website.icon} ${website.iconColor}"></i>
-                </div>
-                <span class="text-sm font-medium truncate">${website.name}</span>
-              `
-            }
-
-            container.appendChild(card)
-          })
-        }
-
-        // 初始化网站卡片
-        function initWebsiteCards() {
-          generateWebsiteCards(
-            'quick-access-container',
-            websiteData.quickAccess,
-            true
-          )
-          generateWebsiteCards(
-            'study-resources-container',
-            websiteData.studyResources
-          )
-
-          generateWebsiteCards('AI-container', websiteData.AI)
-          generateWebsiteCards('job-info-container', websiteData.jobInfo)
-          generateWebsiteCards('news-container', websiteData.news)
-          generateWebsiteCards(
-            'entertainment-container',
-            websiteData.entertainment
-          )
-          generateWebsiteCards('film-container', websiteData.film)
-          generateWebsiteCards('shopping-container', websiteData.shopping)
-          generateWebsiteCards('tools-container', websiteData.tools)
-          generateWebsiteCards('design-container', websiteData.design)
-          generateWebsiteCards('word-container', websiteData.word)
-        }
-
-        // 初始化搜索引擎切换
-        function initSearchEngines() {
-          const engineBtns = document.querySelectorAll('.engine-btn')
-          const searchInput = document.getElementById('search-input')
-          const searchButton = document.getElementById('search-button')
-          let currentEngine = 'baidu'
-
-          // 搜索引擎配置
-          const engines = {
-            baidu: 'https://www.baidu.com/s?wd=',
-            sogou: 'https://www.sogou.com/web?query=',
-            bing: 'https://www.bing.com/search?q=',
-            google: 'https://www.google.com/search?q=',
-          }
-
-          // 切换搜索引擎
-          engineBtns.forEach((btn) => {
-            btn.addEventListener('click', () => {
-              // 更新按钮样式
-              engineBtns.forEach((b) => {
-                b.classList.remove('active', 'bg-primary', 'text-white')
-                b.classList.add('bg-gray-100', 'text-gray-700')
-              })
-
-              btn.classList.add('active', 'bg-primary', 'text-white')
-              btn.classList.remove('bg-gray-100', 'text-gray-700')
-
-              currentEngine = btn.dataset.engine
-            })
-          })
-
-          // 执行搜索
-          function performSearch() {
-            const query = searchInput.value.trim()
-            if (query) {
-              window.open(
-                engines[currentEngine] + encodeURIComponent(query),
-                '_blank'
-              )
-            }
-          }
-
-          // 搜索按钮点击事件
-          searchButton.addEventListener('click', performSearch)
-
-          // 回车键搜索
-          searchInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-              performSearch()
-            }
-          })
-        }
-
-        // 初始化待办事项
-        function initTodoList() {
-          const todoList = document.getElementById('todo-list')
-          const newTodoInput = document.getElementById('new-todo')
-          const addTodoButton = document.getElementById('add-todo')
-          const todoCount = document.getElementById('todo-count')
-          const STORAGE_KEY = 'dashboard_todos'
-
-          // 从本地存储加载待办事项
-          function loadTodos() {
-            const savedTodos = localStorage.getItem(STORAGE_KEY)
-            return savedTodos
-              ? JSON.parse(savedTodos)
-              : [
-                  { id: 1, text: '完成项目报告', completed: true },
-                  { id: 2, text: '回复邮件', completed: true },
-                  { id: 3, text: '准备会议材料', completed: false },
-                  { id: 4, text: '购买生活用品', completed: false },
-                  { id: 5, text: '锻炼身体', completed: false },
-                ]
-          }
-
-          // 保存待办事项到本地存储
-          function saveTodos(todos) {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(todos))
-          }
-
-          // 渲染所有待办事项
-          function renderTodos(todos) {
-            // 清空列表
-            todoList.innerHTML = ''
-
-            // 渲染每个待办事项
-            todos.forEach((todo) => {
-              const todoItem = document.createElement('div')
-              todoItem.className =
-                'todo-item flex items-center gap-2 p-2 hover:bg-gray-50 rounded'
-              todoItem.innerHTML = `
-                    <input type="checkbox" ${
-                      todo.completed ? 'checked' : ''
-                    } class="w-4 h-4 rounded text-primary focus:ring-primary" />
-                    <span class="text-sm flex-grow ${
-                      todo.completed ? 'line-through text-gray-500' : ''
-                    }">${todo.text}</span>
-                    <button class="text-gray-400 hover:text-red-500 p-1">
-                      <i class="fa fa-trash-o text-xs"></i>
-                    </button>
-                  `
-
-              // 添加删除功能
-              const deleteButton = todoItem.querySelector('button')
-              deleteButton.addEventListener('click', () => {
-                const updatedTodos = todos.filter((t) => t.id !== todo.id)
-                saveTodos(updatedTodos)
-                renderTodos(updatedTodos)
-                updateTodoCount(updatedTodos)
-              })
-
-              // 添加完成功能
-              const checkbox = todoItem.querySelector('input[type="checkbox"]')
-              checkbox.addEventListener('change', () => {
-                const updatedTodos = todos.map((t) =>
-                  t.id === todo.id ? { ...t, completed: checkbox.checked } : t
-                )
-                saveTodos(updatedTodos)
-                renderTodos(updatedTodos)
-                updateTodoCount(updatedTodos)
-              })
-
-              todoList.appendChild(todoItem)
-            })
-          }
-
-          // 更新待办事项计数
-          function updateTodoCount(todos) {
-            const total = todos.length
-            const completed = todos.filter((todo) => todo.completed).length
-            todoCount.textContent = `${completed}/${total}`
-          }
-
-          // 添加新待办事项
-          function addNewTodo(text) {
-            if (!text.trim()) return
-
-            const todos = loadTodos()
-            const newId =
-              todos.length > 0 ? Math.max(...todos.map((t) => t.id)) + 1 : 1
-
-            const newTodo = {
-              id: newId,
-              text: text.trim(),
-              completed: false,
-            }
-
-            const updatedTodos = [...todos, newTodo]
-            saveTodos(updatedTodos)
-            renderTodos(updatedTodos)
-            updateTodoCount(updatedTodos)
-
-            newTodoInput.value = ''
-          }
-
-          // 按钮添加待办事项
-          addTodoButton.addEventListener('click', () => {
-            addNewTodo(newTodoInput.value)
-          })
-
-          // 回车添加待办事项
-          newTodoInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-              addNewTodo(newTodoInput.value)
-            }
-          })
-
-          // 初始化加载待办事项
-          const initialTodos = loadTodos()
-          renderTodos(initialTodos)
-          updateTodoCount(initialTodos)
-        }
-
-        // 初始化时间和日期
-        function initDateTime() {
-          const dateElement = document.getElementById('date')
-          const timeElement = document.getElementById('time')
-          const greetingElement = document.getElementById('greeting')
-
-          function updateDateTime() {
-            const now = new Date()
-
-            // 更新时间
-            const hours = String(now.getHours()).padStart(2, '0')
-            const minutes = String(now.getMinutes()).padStart(2, '0')
-            const seconds = String(now.getSeconds()).padStart(2, '0')
-            timeElement.textContent = `${hours}:${minutes}:${seconds}`
-
-            // 更新日期
-            const year = now.getFullYear()
-            const month = now.getMonth() + 1
-            const day = now.getDate()
-            const weekdays = [
-              '星期日',
-              '星期一',
-              '星期二',
-              '星期三',
-              '星期四',
-              '星期五',
-              '星期六',
-            ]
-            const weekday = weekdays[now.getDay()]
-            dateElement.textContent = `${year}年${month}月${day}日 ${weekday}`
-
-            // 更新问候语
-            const hour = now.getHours()
-            let greeting = '早上好！'
-            if (hour >= 9 && hour < 11) {
-              greeting = '上午好！'
-            } else if (hour >= 11 && hour < 13) {
-              greeting = '中午好！'
-            } else if (hour >= 13 && hour < 18) {
-              greeting = '下午好！'
-            } else if (hour >= 18) {
-              greeting = '晚上好！'
-            }
-            greetingElement.textContent = `${greeting}`
-          }
-
-          // 初始更新
-          updateDateTime()
-          // 每秒更新一次
-          setInterval(updateDateTime, 1000)
-        }
-
-        // 初始化天气
-        function initWeather() {
-          const weather = document.getElementById('weather')
-          const weather1 = document.getElementById('weather1')
-          const weather2 = document.getElementById('weather2')
-          const weather3 = document.getElementById('weather3')
-          let day1_weather
-          let day2_weather
-          let day3_weather
-
-          // get获取天气
-          function getWeather() {
-            const xhr = new XMLHttpRequest()
-            const apiUrl =
-              'https://api.seniverse.com/v3/weather/daily.json?key=SCYrvkytJze9qyzOh&location=rizhao&language=zh-Hans&unit=c'
-
-            // 配置请求（方法、地址、是否异步）
-            xhr.open('GET', apiUrl, true)
-
-            // 设置响应类型（可选，如 'json'、'text'）
-            xhr.responseType = 'json'
-
-            // 监听请求完成
-            xhr.onload = function () {
-              if (xhr.status >= 200 && xhr.status < 300) {
-                // 请求成功
-                // console.log(xhr.response)
-
-                let daily = xhr.response.results[0].daily
-                ;(day1_weather = `${daily[0].low}℃~${daily[0].high}℃ ${daily[0].text_day} / ${daily[0].text_night}`),
-                  (day2_weather = `${daily[1].low}℃~${daily[1].high}℃ ${daily[1].text_day} / ${daily[1].text_night}`),
-                  (day3_weather = `${daily[2].low}℃~${daily[2].high}℃ ${daily[2].text_day} / ${daily[2].text_night}`)
-
-                weather.innerHTML = '日照：' + day1_weather
-                weather1.innerHTML = day1_weather
-                weather2.innerHTML = day2_weather
-                weather3.innerHTML = day3_weather
-              } else {
-                // 请求失败
-                console.error('请求失败，状态码：', xhr.status)
-              }
-            }
-
-            // 监听网络错误
-            xhr.onerror = function () {
-              console.error('网络错误，无法连接到服务器')
-            }
-
-            // 发送请求
-            xhr.send()
-          }
-
-          getWeather()
-        }
-
-        // 页面加载完成后初始化
-        document.addEventListener('DOMContentLoaded', () => {
-          initWebsiteCards()
-          initSearchEngines()
-          initTodoList()
-          initDateTime()
-          initWeather()
-        })
-      </script>
+        </section>
+      </main>
     </div>
+
+    <!-- 返回顶部按钮 -->
+    <button
+      id="backToTop"
+      class="fixed bottom-8 right-8 bg-blue-600 text-white p-3 rounded-full shadow-lg opacity-0 invisible transition-all duration-300 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+    >
+      <svg
+        class="w-6 h-6"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M5 15l7-7 7 7"
+        ></path>
+      </svg>
+    </button>
+
+    <script src="./js/index.js"></script>
+    <script src="./js/name.js"></script>
+    <script src="./js/time.js"></script>
+    <script src="./js/search.js"></script>
+    <script src="./js/dashboard.js"></script>
   </body>
 </html>
